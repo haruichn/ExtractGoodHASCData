@@ -131,6 +131,9 @@ public class ExtractGoodData {
 
                                 // それぞれのデータの行数が十分にあるか
                                 if(isEnoughData(acc_data, gyro_data, mag_data)){
+
+                                    System.out.println("◎ データ量OK!◎");
+
                                     // 出力ディレクトリに同じ名前のファイルを作成
                                     // 出力ディレクトリに行動ディレクトリを作成
                                     File output_activity_dir = new File(output_path+activity_dir.getName()+"/");
@@ -209,7 +212,6 @@ public class ExtractGoodData {
                                         e.printStackTrace();
                                     }
 
-                                    System.out.println("◎ データ量OK!◎");
                                     good_acc_file_count++;
                                     System.out.println();
                                 }
