@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
 public class ExtractFile_for_AxisCorrection {
 
     // 十分とみなすファイルの行数の境界
-    static int enough_th = 50;
+    static int enough_th = 10;
 
     public static void main(String[] args){
 
