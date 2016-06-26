@@ -1,6 +1,6 @@
 /*
 * Title：ExtractGoodData
-* 説明 ： 座標系変換(軸補正)に使える, 加速度・角速度・地磁気が揃っているかつ, サンプリング周波数もほぼ等しいデータのみを抽出するツール.
+* 説明 ： 座標系変換(軸補正)に使える, 加速度・角速度が揃っているかつ, サンプリング周波数もほぼ等しいデータのみを抽出するツール.
 * @date Created on: 2016/04/01
 * @author Author: Haruyuki Ichino
 * @version 0.0
@@ -12,8 +12,13 @@ import java.nio.file.*;
 import java.util.StringTokenizer;
 
 
-public class ExtractGoodData {
+public class ExtractFile_for_AxisCorrection {
+
+    // 十分とみなすファイルの行数の境界
+    static int enough_th = 50;
+
     public static void main(String[] args){
+
         // データの場所指定
         String data_path = "./data/";
         // 軸補正後のデータの格納場所
@@ -105,15 +110,14 @@ public class ExtractGoodData {
 
 
 
-                            //同じIDの加速度,ジャイロ,地磁気があるかどうか
-                            if(isHaveAccGytoMag(files, acc_file_name)){ //引数のファイル群は加速度以外のファイルも含む物を渡す
-                                System.out.println("加速度・ジャイロ・地磁気データあり");
+                            //同じIDの加速度,ジャイロがあるかどうか
+                            if(isHaveAccGyroMag(files, acc_file_name)){ //引数のファイル群は加速度以外のファイルも含む物を渡す
+                                System.out.println("加速度・角速度データ");
 
                                 // 姿勢行列計算のテスト
 
                                 double[][] acc_data = null;
                                 double[][] gyro_data = null;
-                                double[][] mag_data = null;
 
                                 for(File file : files){
                                     String file_name = file.getName();
@@ -124,13 +128,10 @@ public class ExtractGoodData {
                                     else if(file_name.matches(file_id + "-gyro.*")){
                                         gyro_data = getCsvData(file);
                                     }
-                                    else if(file_name.matches(file_id + "-mag.*")){
-                                        mag_data = getCsvData(file);
-                                    }
                                 }
 
                                 // それぞれのデータの行数が十分にあるか
-                                if(isEnoughData(acc_data, gyro_data, mag_data)){
+                                if(isEnoughData(acc_data, gyro_data)){
 
                                     System.out.println("◎ データ量OK!◎");
 
@@ -220,7 +221,7 @@ public class ExtractGoodData {
                                 }
                             }
                             else{
-                                System.out.println("加速度・ジャイロ・地磁気データのどれかなし!!");
+                                System.out.println("加速度・角速度データのどれかなし!!");
                             }
                             System.out.println();
                         }
@@ -333,7 +334,7 @@ public class ExtractGoodData {
         return data;
     }
 
-    static boolean isHaveAccGytoMag(File[] files, String file_name){
+    static boolean isHaveAccGyroMag(File[] files, String file_name){
         /**
          * あるファイルIDが加速度,ジャイロ,地磁気を持っているかどうかの判定
          * @param Files ディレクトリ内のファイルリスト
@@ -342,7 +343,6 @@ public class ExtractGoodData {
          */
         boolean isAcc = false;
         boolean isGyro = false;
-        boolean isMag = false;
 
         // 名前からID部分の取り出し
         int idx_hascID = file_name.indexOf("-");
@@ -356,24 +356,19 @@ public class ExtractGoodData {
             else if(target_file_name.matches(file_id + "-gyro.*")){
                 isGyro = true;
             }
-            else if(target_file_name.matches(file_id + "-mag.*")){
-                isMag = true;
-            }
         }
 
-        if((isAcc == true) && (isGyro == true) && (isMag == true)) return true;
+        if((isAcc == true) && (isGyro == true)) return true;
         else return false;
     }
 
-    static boolean isEnoughData(double[][] acc_data, double[][] gyro_data, double[][] mag_data){
-        int bound = 5; //行数の境界
+    static boolean isEnoughData(double[][] acc_data, double[][] gyro_data){
         boolean haveEnoughData = false;
 
         int acc_line_num = acc_data.length;
         int gyro_line_num = gyro_data.length;
-        int mag_line_num = mag_data.length;
 
-        if((acc_line_num-gyro_line_num < bound) && (acc_line_num-mag_line_num < bound)){
+        if(acc_line_num-gyro_line_num < enough_th){
             haveEnoughData = true;
         }
 
@@ -382,8 +377,6 @@ public class ExtractGoodData {
         System.out.print(acc_line_num);
         System.out.print(", gyro:");
         System.out.print(gyro_line_num);
-        System.out.print(", mag:");
-        System.out.print(mag_line_num);
         System.out.println(")");
 
         return haveEnoughData;
