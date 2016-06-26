@@ -150,14 +150,12 @@ public class ExtractFile_for_AxisCorrection {
                                     // 入力ファイルのパス設定
                                     Path accFilePath = FileSystems.getDefault().getPath(person_dir.getPath()+"/"+file_id+"-acc.csv");
                                     Path gyroFilePath = FileSystems.getDefault().getPath(person_dir.getPath()+"/"+file_id+"-gyro.csv");
-                                    Path magFilePath = FileSystems.getDefault().getPath(person_dir.getPath()+"/"+file_id+"-mag.csv");
                                     Path metaFilePath = FileSystems.getDefault().getPath(person_dir.getPath()+"/"+file_id+".meta");
                                     Path labelFilePath = FileSystems.getDefault().getPath(person_dir.getPath()+"/"+file_id+".label");
 
                                     // 出力ファイルのパス設定
                                     Path output_accFilePath = FileSystems.getDefault().getPath(output_person_dir.getPath()+"/"+file_id+"-acc.csv");
                                     Path output_gyroFilePath = FileSystems.getDefault().getPath(output_person_dir.getPath()+"/"+file_id+"-gyro.csv");
-                                    Path output_magFilePath = FileSystems.getDefault().getPath(output_person_dir.getPath()+"/"+file_id+"-mag.csv");
                                     Path output_metaFilePath = FileSystems.getDefault().getPath(output_person_dir.getPath()+"/"+file_id+".meta");
                                     Path output_labelFilePath = FileSystems.getDefault().getPath(output_person_dir.getPath()+"/"+file_id+".label");
 
@@ -176,16 +174,6 @@ public class ExtractFile_for_AxisCorrection {
                                     try {
                                         Files.copy(gyroFilePath, output_gyroFilePath);
                                         System.out.println("コピー完了: "+output_gyroFilePath.toString());
-                                    } catch (FileAlreadyExistsException e){
-                                        System.out.println("\tError: ファイルがすでに存在しています!");
-                                    } catch (NoSuchFileException e) {
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    // 地磁気
-                                    try {
-                                        Files.copy(magFilePath, output_magFilePath);
-                                        System.out.println("コピー完了: "+output_magFilePath.toString());
                                     } catch (FileAlreadyExistsException e){
                                         System.out.println("\tError: ファイルがすでに存在しています!");
                                     } catch (NoSuchFileException e) {
